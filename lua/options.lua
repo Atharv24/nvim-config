@@ -52,11 +52,12 @@ vim.opt.formatexpr = "v:lua.vim.lsp.formatexpr()"
 
 -- --- OS Specific Settings ---
 if vim.fn.has('win32') or vim.fn.has('win64') then
+  local user_vars = require('user_vars')
   -- Point to the Python interpreter for Neovim Python support
-  vim.g.python3_host_prog = 'C:\\Users\\atharvmaan\\AppData\\Local\\Programs\\Python\\Python313\\python.exe'
+  vim.g.python3_host_prog = user_vars.python_host_prog
   -- Use Git Bash as the shell
-    vim.g.shell = 'C:\\Program Files\\Git\\bin\\bash.exe'
-    vim.g.BASH = vim.g.shell
+  vim.g.shell = user_vars.shell
+  vim.g.BASH = vim.g.shell
 end
 
 -- --- Diagnostic Configuration ---
