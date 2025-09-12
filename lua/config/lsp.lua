@@ -53,9 +53,11 @@ capabilities.textDocument.semanticTokens = {
 }
 
 -- Configure clangd with a specific path
-local user_vars = require('user_vars')
 lspconfig.clangd.setup {
-  cmd = user_vars.clangd_cmd,
+  cmd = {
+    "C:/src/chrome/src/third_party/llvm-build/Release+Asserts/bin/clangd.exe",
+    "--compile-commands-dir=C:/src/chrome/src",
+  },
   filetypes = { "c", "cpp", "cc", "h", "objc", "objcpp" },
   on_attach = on_attach,
   capabilities = capabilities,
