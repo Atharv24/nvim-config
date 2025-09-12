@@ -45,6 +45,7 @@ vim.opt.mouse = "n"               -- Enable mouse in normal mode
 vim.opt.clipboard = "unnamedplus" -- Use system clipboard
 vim.opt.encoding = "UTF-8"
 vim.opt.fileformat = "unix"
+vim.opt.fileformats = "unix,dos,mac"
 vim.opt.sessionoptions = "blank,buffers,curdir,folds,help,tabpages,winsize,winpos,terminal,localoptions"
 
 -- Use LSP for the 'gq' formatting command

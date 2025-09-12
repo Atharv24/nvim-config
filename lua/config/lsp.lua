@@ -3,19 +3,7 @@
 -- ===========================================================================
 -- IMPORTANT: Make sure you have the 'nvim-lspconfig' plugin installed.
 
--- Automatically clear the LSP log file on exit
-vim.api.nvim_create_autocmd("ExitPre", {
-  pattern = "*",
-  callback = function()
-    local log_path = vim.fn.stdpath("data") .. "/lsp.log"
-    -- Check if the file exists and is readable before trying to remove it.
-    -- vim.uv.fs_stat returns nil if the path does not exist.
-    if vim.uv.fs_stat(log_path) then
-      os.remove(log_path)
-    end
-  end,
-  desc = "Clear LSP log file on exit",
-})
+vim.lsp.set_log_level("off")
 
 -- Load the lspconfig module
 local lspconfig = require('lspconfig')

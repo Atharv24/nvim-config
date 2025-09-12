@@ -27,6 +27,12 @@ vim.keymap.set("n", "<leader>a",
   function() harpoon:list():add() end,
   { desc = "Add file to harpoon"}
 )
+
+vim.keymap.set("n", "<leader>hc",
+  function() harpoon:list():clear() end,
+  { desc = "Clear all files from harpoon" }
+)
+
 -- vim.keymap.set("n", "<C-e>",
 --   function() harpoon.ui:toggle_quick_menu(harpoon:list()) end,
 --   { desc = "Harpoon quick toggle menu" }
