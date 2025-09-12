@@ -2,7 +2,16 @@
 -- It's meant to be loaded by lazy.nvim.
 
 return {
-  -- Tabs
+  -- =======================================================================
+  -- UI & THEME
+  -- =======================================================================
+  { "rebelot/kanagawa.nvim", priority = 1000, lazy = false },
+  { "catppuccin/nvim", name = "catppuccin", priority = 1000, lazy = false },
+  {
+    "folke/tokyonight.nvim",
+    lazy = false, -- make sure we load this during startup
+    priority = 1000, -- make sure to load this before other plugins
+  },
   {
     'akinsho/bufferline.nvim',
     requires = 'nvim-tree/nvim-web-devicons',
@@ -10,11 +19,19 @@ return {
       require('bufferline').setup{}
     end
   },
+  -- {
+  --   "nvim-tree/nvim-tree.lua",
+  --   dependencies = {
+  --     "nvim-tree/nvim-web-devicons", -- optional, for file icons
+  --   },
+  --   config = function()
+  --     require('config.nvim-tree')
+  --   end
+  -- },
 
-  -- GN Syntax
-  { "https://gn.googlesource.com/gn", rtp = "misc/vim" },
-
-  -- LSP & Autocompletion
+  -- =======================================================================
+  -- LSP & AUTOCOMPLETION
+  -- =======================================================================
   {
     "neovim/nvim-lspconfig",
     config = function()
@@ -32,36 +49,35 @@ return {
     },
   },
 
-  -- UI & Theme
-  { "rebelot/kanagawa.nvim", priority = 1000, lazy = false },
-  { "catppuccin/nvim", name = "catppuccin", priority = 1000, lazy = false },
-  {
-    "folke/tokyonight.nvim",
-    lazy = false, -- make sure we load this during startup
-    priority = 1000, -- make sure to load this before other plugins
-  },
-
-  -- Helper
+  -- =======================================================================
+  -- HELPER & UTILITIES
+  -- =======================================================================
   {
     "folke/which-key.nvim",
     event = "VeryLazy",
     config = function()
-        require('config.whichkey') 
+        require('config.whichkey')
+    end
+  },
+  {
+    "rmagatti/auto-session",
+    config = function()
+      require('config.auto-session')
+    end
+  },
+  {
+    "ThePrimeagen/harpoon",
+    branch = "harpoon2",
+    dependencies = { "nvim-lua/plenary.nvim" },
+    config = function()
+      require('config.harpoon')
     end
   },
 
-  -- File Explorer
-  -- {
-  --   "nvim-tree/nvim-tree.lua",
-  --   dependencies = {
-  --     "nvim-tree/nvim-web-devicons", -- optional, for file icons
-  --   },
-  --   config = function()
-  --     require('config.nvim-tree')
-  --   end
-  -- },
-
-  -- Treesitter
+  -- =======================================================================
+  -- SYNTAX & TREESITTER
+  -- =======================================================================
+  { "https://gn.googlesource.com/gn", rtp = "misc/vim" },
   {
     'nvim-treesitter/nvim-treesitter',
     lazy = false,
@@ -72,7 +88,9 @@ return {
     end
   },
 
-  -- Git Integration
+  -- =======================================================================
+  -- GIT INTEGRATION
+  -- =======================================================================
   {
     "lewis6991/gitsigns.nvim",
     config = function()
@@ -80,7 +98,9 @@ return {
     end
   },
 
-  -- Fuzzy file finder
+  -- =======================================================================
+  -- FUZZY FINDER
+  -- =======================================================================
   {
     "nvim-telescope/telescope.nvim",
     branch = "0.1.x",
@@ -91,24 +111,6 @@ return {
     },
     config = function()
       require('config.telescope')
-    end
-  },
-
-  -- For session management
-  {
-    "rmagatti/auto-session",
-    config = function()
-      require('config.auto-session')
-    end
-  },
-
-  -- For marking files and jumping between them
-  {
-    "ThePrimeagen/harpoon",
-    branch = "harpoon2",
-    dependencies = { "nvim-lua/plenary.nvim" },
-    config = function()
-      require('config.harpoon')
     end
   },
 }
