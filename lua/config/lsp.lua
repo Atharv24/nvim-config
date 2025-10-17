@@ -5,9 +5,6 @@
 
 vim.lsp.set_log_level("off")
 
--- Load the lspconfig module
-local lspconfig = require('lspconfig')
-
 local on_attach = function(client, bufnr)
   -- Increase timeout for semantic tokens
   client.timeout = 15000
@@ -30,7 +27,33 @@ local on_attach = function(client, bufnr)
 
   -- Add keymap for ClangdSwitchSourceHeader
   if client.name == 'clangd' then
-    vim.keymap.set('n', '<leader>ch', '<cmd>ClangdSwitchSourceHeader<CR>', { buffer = bufnr, desc = 'Switch source/header' })
+    vim.api.nvim_buf_create_user_command(
+      bufnr,
+      'ClangdSwitchSourceHeader',
+      function()
+        client.request('textDocument/switchSourceHeader', {
+          uri = vim.uri_from_bufnr(bufnr),
+        }, function(err, result)
+          if err then
+            vim.notify(
+              'Clangd: Failed to switch source/header (' .. err.message .. ')',
+              vim.log.levels.WARN
+            )
+            return
+          end
+          if result then
+            vim.cmd.edit(vim.uri_to_fname(result))
+          else
+            vim.notify('Clangd: No corresponding file found', vim.log.levels.INFO)
+          end
+        end)
+      end,
+      { desc = 'Clangd: Switch Source/Header' }
+    )
+
+    vim.keymap.set('n', '<leader>ch', '<cmd>ClangdSwitchSourceHeader<CR>',
+      { buffer = bufnr, desc = 'Switch source/header (Clangd)' }
+    )
   end
 end
 
@@ -45,8 +68,7 @@ capabilities.textDocument.semanticTokens = {
     multilineTokenSupport = true,
 }
 
--- Configure clangd with a specific path
-lspconfig.clangd.setup {
+vim.lsp.config("clangd", {
   cmd = {
     "C:/src/chrome/src/third_party/llvm-build/Release+Asserts/bin/clangd.exe",
     "--compile-commands-dir=C:/src/chrome/src",
@@ -54,5 +76,7 @@ lspconfig.clangd.setup {
   filetypes = { "c", "cpp", "cc", "h", "objc", "objcpp" },
   on_attach = on_attach,
   capabilities = capabilities,
-}
+})
+
+vim.lsp.enable("clangd")
 
