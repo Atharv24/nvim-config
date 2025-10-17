@@ -27,6 +27,11 @@ local on_attach = function(client, bufnr)
   vim.keymap.set('n', 'K', vim.lsp.buf.hover, { buffer = bufnr, desc = 'Show hover documentation' })
   vim.keymap.set('n', '<leader>rn', vim.lsp.buf.rename, { buffer = bufnr, desc = 'Rename symbol' })
   vim.keymap.set('n', '<leader>ca', vim.lsp.buf.code_action, { buffer = bufnr, desc = 'Code action' })
+
+  -- Add keymap for ClangdSwitchSourceHeader
+  if client.name == 'clangd' then
+    vim.keymap.set('n', '<leader>ch', '<cmd>ClangdSwitchSourceHeader<CR>', { buffer = bufnr, desc = 'Switch source/header' })
+  end
 end
 
 local capabilities = vim.lsp.protocol.make_client_capabilities()
