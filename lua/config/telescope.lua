@@ -51,4 +51,8 @@ vim.keymap.set('n', '<leader>fh',
   { desc = 'Find Highlights' }
 )
 
+vim.keymap.set('n', '<leader>fg',
+  require('telescope.builtin').git_status,
+{ desc = 'Telescope Git Status' }
+)
 
