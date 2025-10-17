@@ -77,6 +77,15 @@ vim.lsp.config("clangd", {
   on_attach = on_attach,
   capabilities = capabilities,
 })
-
 vim.lsp.enable("clangd")
+
+vim.lsp.config("gnls", {
+  cmd = {
+    "node",
+    "C:/Users/atharvmaan/.vscode/extensions/msedge-dev.gnls-0.1.4/build/server.js", 
+    "--stdio"
+  }
+})
+
+vim.lsp.enable("gnls")
 
