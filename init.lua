@@ -15,6 +15,9 @@ require("keymaps")
 -- Load custom highlights
 require("highlights")
 
+-- Autocommands
+require("autocmds")
+
 -- ===========================================================================
 -- LAZY.NVIM PLUGIN MANAGER SETUP
 -- ===========================================================================
