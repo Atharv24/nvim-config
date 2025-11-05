@@ -42,14 +42,12 @@ vim.api.nvim_create_autocmd("BufNewFile", {
     callback = function(args)
         local guard = generate_chromium_guard(args.file)
         local header_template = string.format(
-            [=[
-#ifndef %s
+            [=[#ifndef %s
 #define %s
 
 // Your code here
 
-#endif  // %s
-]=],
+#endif  // %s]=],
             guard, guard, guard
         )
         -- Append the header guard content after the copyright
@@ -79,8 +77,7 @@ vim.api.nvim_create_autocmd("BufNewFile", {
         local full_header_path = normalized_path:gsub("%.cc$", ".h")
         
         local cc_template = string.format(
-            [=[
-#include "%s"
+            [=[#include "%s"
 
 // Your code here
 
