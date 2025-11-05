@@ -66,9 +66,17 @@ vim.api.nvim_create_autocmd("BufNewFile", {
     group = TEMPLATE_GROUP,
     pattern = "*.cc",
     callback = function(args)
-        local full_filename = args.file
-        local header_filename = full_filename:gsub("%.cc$", ".h")
-        local simple_header_name = vim.fn.fnamemodify(header_filename, ":t")
+        -- Get the full path of the new file
+        local full_filepath = args.file
+
+        -- Get the path *relative to the current working directory* (repo root)
+        local relative_path = vim.fn.fnamemodify(full_filepath, ":.")
+
+        -- Replace all backslashes (\) with forward slashes (/)
+        local normalized_path = relative_path:gsub("\\", "/")
+
+        -- Replace the .cc extension with .h
+        local full_header_path = normalized_path:gsub("%.cc$", ".h")
         
         local cc_template = string.format(
             [=[
@@ -77,7 +85,7 @@ vim.api.nvim_create_autocmd("BufNewFile", {
 // Your code here
 
 ]=],
-            simple_header_name
+            full_header_path
         )
         -- Append the CC content after the copyright
         vim.api.nvim_buf_set_lines(args.buf, 5, 5, false, vim.split(cc_template, "\n"))
