@@ -33,13 +33,16 @@ keymap("n", "<leader>cf", function()
 end, { desc = "Format file with LSP" })
 
 -- Copy relative path to the system clipboard
-keymap("n", "<leader>cp", function()
+function get_current_file_relative_path()
   -- Get the file path relative to the current working directory.
   local relative_path = vim.fn.expand("%:.")
   -- Replace backslashes with forward slashes for Unix-style path
-  local unix_path = string.gsub(relative_path, "\\", "/")
-  -- Put the Unix-style path into the system clipboard register.
-  vim.fn.setreg("+", unix_path)
+  return string.gsub(relative_path, "\\", "/")
+end
+
+keymap("n", "<leader>cp", function()
+  local file_path = get_current_file_relative_path()
+  vim.fn.setreg("+", file_path)
 end, { desc = "Copy relative path" })
 
 keymap(
