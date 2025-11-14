@@ -129,4 +129,12 @@ return {
       require('config.telescope')
     end
   },
+
+  {
+    'akinsho/toggleterm.nvim',
+    version = '*',
+    config = function()
+      require('config.toggleterm')
+    end   
+  }
 }
