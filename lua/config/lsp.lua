@@ -68,10 +68,41 @@ capabilities.textDocument.semanticTokens = {
     multilineTokenSupport = true,
 }
 
+local current_dir = vim.fn.getcwd()
+local root_dir = ""
+local clangd_executable_path = ""
+local compile_commands_dir = ""
+
+-- 1. Determine the root of the Chromium checkout based on the current directory
+-- This logic assumes you are running Neovim from within the 'src' directory of a worktree,
+-- e.g., C:/src/chrome/src or C:/src/chrome3/src.
+
+-- Check if the current directory ends with '/src' or '\src'
+if current_dir:match("[/\\]src$") then
+    -- The root is one level up (e.g., C:/src/chrome or C:/src/chrome3)
+    root_dir = current_dir:gsub("[/\\]src$", "")
+    
+    -- Construct the required paths
+    clangd_executable_path = root_dir .. "/src/third_party/llvm-build/Release+Asserts/bin/clangd.exe"
+    
+    -- The compile commands file is usually placed next to the 'src' folder itself,
+    -- or within the build output folder, but for clangd in Chromium, 
+    -- the --compile-commands-dir argument should point to the build directory 
+    -- (e.g., C:/src/chrome3/src/out/Default) or the src folder itself depending on your setup.
+    -- Sticking to your original setup:
+    compile_commands_dir = root_dir .. "/src/out/Default"
+    
+else
+    -- Fallback or error handling if not opened in a Chromium 'src' folder
+    print("Warning: Not opened in a known Chromium 'src' directory. Using default config.")
+    -- Use a default path or simply return if you don't want to start clangd
+    return
+end
+
 vim.lsp.config("clangd", {
   cmd = {
-    "C:/src/chrome/src/third_party/llvm-build/Release+Asserts/bin/clangd.exe",
-    "--compile-commands-dir=C:/src/chrome/src",
+    clangd_executable_path,
+    "--compile-commands-dir=" .. compile_commands_dir,
   },
   filetypes = { "c", "cpp", "cc", "h", "objc", "objcpp" },
   on_attach = on_attach,
