@@ -17,8 +17,31 @@ function run_autotest_on_current_file()
   toggleterm.exec(command, 1, 2, nil, 'float')
 end
 
+function build_chrome() 
+  local command = "autoninja -C out/Default chrome"
+
+  toggleterm.exec(command, 1, 2, nil, 'float')
+end
+
+function run_chrome_with_default_args()
+  local command = "out/Default/chrome.exe --user-data-dir=/tmp/chrome"
+  toggleterm.exec(command, 1, 2, nil, 'float')
+end
+
 vim.keymap.set('n', '<leader>ct', run_autotest_on_current_file, {
   noremap = true,
   silent = true,
   desc = 'Run autotest.py on current file'
+})
+
+vim.keymap.set('n', '<leader>cb', build_chrome, {
+  noremap = true,
+  silent = true,
+  desc = 'Build Chrome in out/Default directory'
+})
+
+vim.keymap.set('n', '<leader>cr', run_chrome_with_default_args, {
+  noremap = true,
+  silent = true,
+  desc = 'Run Chrome with default args'
 })
