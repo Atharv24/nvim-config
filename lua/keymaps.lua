@@ -75,3 +75,31 @@ keymap('n', '<leader>E', ':NvimTreeFocus<CR>', {
     silent = true,
     desc = 'Focus File Explorer (Nvim-Tree)', 
 })
+
+local function open_chromium_codesearch()
+  local relative_path = get_current_file_relative_path()
+  local line_num = vim.fn.line('.')
+
+  -- Construct the Chromium Code Search URL
+  -- defaults to 'main' branch; you can make this dynamic if needed
+  local url = string.format(
+    "https://source.chromium.org/chromium/chromium/src/+/main:%s;l=%d",
+    relative_path,
+    line_num
+  )
+    
+  -- Open the URL (system agnostic)
+  local open_cmd
+  if vim.fn.has("mac") == 1 then
+    open_cmd = "open"
+  elseif vim.fn.has("unix") == 1 then
+    open_cmd = "xdg-open"
+  else
+    open_cmd = "start chrome"
+  end
+    
+  os.execute(string.format("%s %s", open_cmd, url))
+  print("Opened in Chromium Code Search: " .. relative_path)
+end
+
+vim.keymap.set('n', '<leader>cs', open_chromium_codesearch, { desc = 'Open in Chromium Code Search' })
