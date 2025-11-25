@@ -76,18 +76,62 @@ keymap('n', '<leader>E', ':NvimTreeFocus<CR>', {
     desc = 'Focus File Explorer (Nvim-Tree)', 
 })
 
-local function open_chromium_codesearch()
-  local relative_path = get_current_file_relative_path()
-  local line_num = vim.fn.line('.')
+local function get_symbol_chain_at_cursor()
+  local line = vim.api.nvim_get_current_line()
+  local col = vim.api.nvim_win_get_cursor(0)[2] + 1 -- Lua strings are 1-indexed
 
-  -- Construct the Chromium Code Search URL
-  -- defaults to 'main' branch; you can make this dynamic if needed
-  local url = string.format(
-    "https://source.chromium.org/chromium/chromium/src/+/main:%s;l=%d",
-    relative_path,
-    line_num
-  )
-    
+  -- Define what constitutes a "part of the chain"
+  -- Allowed: Alphanumeric, underscore, and colons (::)
+  local function is_valid_char(char)
+    return char:match("[%w_:]")
+  end
+
+  -- 1. Scan Left
+  local start_idx = col
+  while start_idx > 0 do
+    local char = line:sub(start_idx, start_idx)
+    if not is_valid_char(char) then
+      start_idx = start_idx + 1 -- Backup one step
+      break
+    end
+    start_idx = start_idx - 1
+  end
+  -- Handle edge case where we hit the start of the line
+  if start_idx == 0 then start_idx = 1 end
+
+  -- 2. Scan Right
+  local end_idx = col
+  while end_idx <= #line do
+    local char = line:sub(end_idx, end_idx)
+    if not is_valid_char(char) then
+      end_idx = end_idx - 1 -- Backup one step
+      break
+    end
+    end_idx = end_idx + 1
+  end
+
+  return line:sub(start_idx, end_idx)
+end
+
+local function open_chromium_codesearch(symbol)
+  local url 
+  if not symbol then
+    local relative_path = get_current_file_relative_path()
+    local line_num = vim.fn.line('.')
+    url = string.format(
+      "https://source.chromium.org/chromium/chromium/src/+/main:%s;l=%d",
+      relative_path,
+      line_num
+    )
+    -- vim.print("Opening in Chromium Code Search: " .. relative_path)
+  else
+    url = string.format(
+      "https://source.chromium.org/search?q=%s&ss=chromium/chromium/src",
+      symbol
+    )
+    -- vim.print("Opening in Chromium Code Search: " .. symbol)
+  end
+
   -- Open the URL (system agnostic)
   local open_cmd
   if vim.fn.has("mac") == 1 then
@@ -99,7 +143,17 @@ local function open_chromium_codesearch()
   end
     
   os.execute(string.format("%s %s", open_cmd, url))
-  print("Opened in Chromium Code Search: " .. relative_path)
 end
 
-vim.keymap.set('n', '<leader>cs', open_chromium_codesearch, { desc = 'Open in Chromium Code Search' })
+local function open_codesearch_for_symbol() 
+  local symbol = get_symbol_chain_at_cursor()
+  open_chromium_codesearch(symbol)
+end
+
+vim.keymap.set('n', '<leader>sf', open_chromium_codesearch,
+  { desc = 'Open in Chromium Code Search' }
+)
+
+vim.keymap.set('n', '<leader>ss', open_codesearch_for_symbol,
+  { desc = 'Open in Chromium Code Search for hovered symbol' }
+)
