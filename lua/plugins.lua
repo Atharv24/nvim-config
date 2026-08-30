@@ -88,7 +88,8 @@ return {
   {
     'nvim-treesitter/nvim-treesitter',
     lazy = false,
-    tag = 'v0.10.0',
+    -- tag = 'v0.10.0',
+    branch = 'master',
     build = ':TSUpdate',
     config = function()
       require('config.treesitter')

@@ -3,7 +3,7 @@
 -- ===========================================================================
 -- IMPORTANT: Make sure you have the 'nvim-lspconfig' plugin installed.
 
-vim.lsp.set_log_level("off")
+-- vim.lsp.set_log_level("off")
 
 local on_attach = function(client, bufnr)
   -- Increase timeout for semantic tokens
@@ -91,25 +91,40 @@ if current_dir:match("[/\\]src$") then
     -- (e.g., C:/src/chrome3/src/out/Default) or the src folder itself depending on your setup.
     -- Sticking to your original setup:
     compile_commands_dir = root_dir .. "/src/out/Default"
-    
+
+    vim.lsp.config("clangd", {
+      cmd = {
+        clangd_executable_path,
+        "--compile-commands-dir=" .. compile_commands_dir,
+      },
+      filetypes = { "c", "cpp", "cc", "h", "objc", "objcpp" },
+      on_attach = on_attach,
+      capabilities = capabilities,
+    })
+    vim.lsp.enable("clangd")
 else
     -- Fallback or error handling if not opened in a Chromium 'src' folder
     print("Warning: Not opened in a known Chromium 'src' directory. Using default config.")
     -- Use a default path or simply return if you don't want to start clangd
-    return
 end
 
-vim.lsp.config("clangd", {
+-- ===========================================================================
+-- Python LSP Configuration
+-- ===========================================================================
+vim.lsp.config("pyright", {
   cmd = {
-    clangd_executable_path,
-    "--compile-commands-dir=" .. compile_commands_dir,
+    "C:/Users/athar/AppData/Local/Packages/PythonSoftwareFoundation.Python.3.12_qbz5n2kfra8p0/LocalCache/local-packages/Python312/Scripts/pyright-langserver.exe",
+    "--stdio"
   },
-  filetypes = { "c", "cpp", "cc", "h", "objc", "objcpp" },
+  filetypes = { "python" },
   on_attach = on_attach,
   capabilities = capabilities,
 })
-vim.lsp.enable("clangd")
+vim.lsp.enable("pyright")
 
+-- ===========================================================================
+-- GN LSP Configuration
+-- ===========================================================================
 vim.lsp.config("gnls", {
   cmd = {
     "node",
@@ -117,6 +132,4 @@ vim.lsp.config("gnls", {
     "--stdio"
   }
 })
-
 vim.lsp.enable("gnls")
-
