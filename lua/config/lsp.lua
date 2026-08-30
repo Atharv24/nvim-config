@@ -111,16 +111,47 @@ end
 -- ===========================================================================
 -- Python LSP Configuration
 -- ===========================================================================
+
+local custom_pyright_on_attach = function(client, bufnr)
+  if on_attach then on_attach(client, bufnr) end
+
+  client.server_capabilities.documentFormmatingProvider = false
+end
+
 vim.lsp.config("pyright", {
   cmd = {
     "C:/Users/athar/AppData/Local/Packages/PythonSoftwareFoundation.Python.3.12_qbz5n2kfra8p0/LocalCache/local-packages/Python312/Scripts/pyright-langserver.exe",
     "--stdio"
   },
   filetypes = { "python" },
-  on_attach = on_attach,
+  on_attach = custom_pyright_on_attach,
   capabilities = capabilities,
 })
 vim.lsp.enable("pyright")
+
+-- 2. Add the Ruff LSP Configuration
+local ruff_on_attach = function(client, bufnr)
+  if on_attach then on_attach(client, bufnr) end
+
+  -- Disable hover from Ruff to keep Pyright's hover documentation
+  client.server_capabilities.hoverProvider = false
+
+  -- Auto-format on save using Ruff
+  vim.api.nvim_create_autocmd("BufWritePre", {
+    buffer = bufnr,
+    callback = function()
+      vim.lsp.buf.format({ async = false })
+    end,
+  })
+end
+
+vim.lsp.config("ruff", {
+  cmd = { "ruff", "server" }, -- Assumes ruff is in your Windows PATH
+  filetypes = { "python" },
+  on_attach = ruff_on_attach,
+  capabilities = capabilities,
+})
+vim.lsp.enable("ruff")
 
 -- ===========================================================================
 -- GN LSP Configuration
