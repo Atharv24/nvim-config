@@ -16,6 +16,11 @@ toggleterm.setup({
   direction = 'float', -- Set the default direction to 'float', 'horizontal', or 'vertical'
   shell = "pwsh.exe", -- Use your default shell
   float_opts = float_opts,
+  start_in_insert = true,
+  persist_mode = false,
+  on_open = function(term)
+    vim.cmd("startinsert!")
+  end,
 })
 
 function get_symbol_under_cursor()
@@ -96,6 +101,27 @@ local function toggle_terminal()
 end
 
 local function toggle_jetski()
+  if vim.fn.executable("jetski-cli") == 0 then
+    vim.notify("jetski-cli is not installed or not in PATH", vim.log.levels.WARN, { title = "Jetski" })
+    return
+  end
+
+  if not jetski_term then
+    jetski_term = Terminal:new({
+      cmd = "jetski-cli",
+      direction = "float",
+      hidden = true,
+      count = 9, -- Separate ID from default terminal 1
+      float_opts = float_opts,
+      on_open = function(term)
+        vim.cmd("startinsert!")
+        -- Ensure <C-t> inside Jetski directly switches back to general terminal
+        vim.keymap.set('t', '<C-t>', toggle_terminal, { buffer = term.bufnr, silent = true, nowait = true })
+      end,
+      close_on_exit = false,
+    })
+  end
+
   -- If any other terminal is open, close it first before opening/focusing Jetski
   local terms = require('toggleterm.terminal')
   for _, t in pairs(terms.get_all(true)) do
@@ -105,20 +131,6 @@ local function toggle_jetski()
   end
   jetski_term:toggle()
 end
-
-jetski_term = Terminal:new({
-  cmd = "jetski-cli",
-  direction = "float",
-  hidden = true,
-  count = 9, -- Separate ID from default terminal 1
-  float_opts = float_opts,
-  on_open = function(term)
-    vim.cmd("startinsert!")
-    -- Ensure <C-t> inside Jetski directly switches back to general terminal
-    vim.keymap.set('t', '<C-t>', toggle_terminal, { buffer = term.bufnr, silent = true, nowait = true })
-  end,
-  close_on_exit = false,
-})
 
 -- <C-t> toggles general terminal in both normal and terminal mode
 vim.keymap.set({ 'n', 't' }, '<C-t>', toggle_terminal, {
