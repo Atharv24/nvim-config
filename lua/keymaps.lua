@@ -157,3 +157,11 @@ vim.keymap.set('n', '<leader>sf', open_chromium_codesearch,
 vim.keymap.set('n', '<leader>ss', open_codesearch_for_symbol,
   { desc = 'Open in Chromium Code Search for hovered symbol' }
 )
+
+-- Deletes the inner word under cursor to the black hole register ("_), 
+-- then pastes (P) the current clipboard content in its place.
+vim.keymap.set("n", "<leader>r", '"_diwP', { desc = "Replace word with clipboard" })
+
+-- In Visual mode, pasting deletes the selection to the black hole register
+-- before pasting, preserving the original clipboard content.
+vim.keymap.set("x", "p", '"_dP', { desc = "Paste without overwriting clipboard" })

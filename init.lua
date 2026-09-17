@@ -62,8 +62,20 @@ require("lazy").setup(require("plugins"))
 -- vim.cmd.colorscheme "catppuccin"
 vim.cmd.colorscheme "kanagawa-wave"
 
--- vim.api.nvim_create_autocmd('FileType', {
---   pattern = { '*' },
---   callback = function() vim.treesitter.start() end,
--- })
+vim.api.nvim_create_autocmd({ "FileType" }, {
+  pattern = { "cpp", "json", "gn" },
+  callback = function()
+    vim.opt_local.foldmethod = "expr"
+    vim.opt_local.foldexpr = "v:lua.vim.treesitter.foldexpr()"
+  end,
+})
 
+-- Keep folds open by default when opening a file
+-- (0 = all closed, 99 = all open)
+vim.opt.foldlevel = 20
+vim.opt.foldlevelstart = 20
+
+vim.opt.foldnestmax = 3
+
+-- Optional: Don't fold by default until you trigger it
+vim.opt.foldenable = false

@@ -24,6 +24,7 @@ local on_attach = function(client, bufnr)
   vim.keymap.set('n', 'K', vim.lsp.buf.hover, { buffer = bufnr, desc = 'Show hover documentation' })
   vim.keymap.set('n', '<leader>rn', vim.lsp.buf.rename, { buffer = bufnr, desc = 'Rename symbol' })
   vim.keymap.set('n', '<leader>ca', vim.lsp.buf.code_action, { buffer = bufnr, desc = 'Code action' })
+  vim.keymap.set('v', '<leader>ca', vim.lsp.buf.code_action, { buffer = bufnr, desc = 'Code action' })
 
   -- Add keymap for ClangdSwitchSourceHeader
   if client.name == 'clangd' then
@@ -70,8 +71,7 @@ capabilities.textDocument.semanticTokens = {
 
 local current_dir = vim.fn.getcwd()
 local root_dir = ""
-local clangd_executable_path = ""
-local compile_commands_dir = ""
+local clangd_executable_folder = ""
 
 -- 1. Determine the root of the Chromium checkout based on the current directory
 -- This logic assumes you are running Neovim from within the 'src' directory of a worktree,
@@ -83,19 +83,12 @@ if current_dir:match("[/\\]src$") then
     root_dir = current_dir:gsub("[/\\]src$", "")
     
     -- Construct the required paths
-    clangd_executable_path = root_dir .. "/src/third_party/llvm-build/Release+Asserts/bin/clangd.exe"
-    
-    -- The compile commands file is usually placed next to the 'src' folder itself,
-    -- or within the build output folder, but for clangd in Chromium, 
-    -- the --compile-commands-dir argument should point to the build directory 
-    -- (e.g., C:/src/chrome3/src/out/Default) or the src folder itself depending on your setup.
-    -- Sticking to your original setup:
-    compile_commands_dir = root_dir .. "/src/out/Default"
+    clangd_executable_folder = root_dir .. "/src/third_party/llvm-build/Release+Asserts/bin/"
 
     vim.lsp.config("clangd", {
       cmd = {
-        clangd_executable_path,
-        "--compile-commands-dir=" .. compile_commands_dir,
+        clangd_executable_folder .. "clangd.exe",
+        "--background-index",
       },
       filetypes = { "c", "cpp", "cc", "h", "objc", "objcpp" },
       on_attach = on_attach,
@@ -156,11 +149,15 @@ vim.lsp.enable("ruff")
 -- ===========================================================================
 -- GN LSP Configuration
 -- ===========================================================================
-vim.lsp.config("gnls", {
-  cmd = {
-    "node",
-    "C:/Users/atharvmaan/.vscode/extensions/msedge-dev.gnls-0.1.4/build/server.js", 
-    "--stdio"
-  }
+vim.lsp.config("gn", {
+  cmd = { 'C:/src/gn/gn-language-server.exe' },
+  filetypes = { 'gn', 'gni' },
+  -- root_dir is important: it looks for .gn (repo root) or BUILD.gn files
+  root_dir = root_dir .. '\\src',
+  single_file_support = true,
+  capabilities = capabilities,
+  on_attach = on_attach,
 })
-vim.lsp.enable("gnls")
+
+vim.lsp.enable("gn")
+

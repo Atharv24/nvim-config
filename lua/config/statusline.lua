@@ -114,9 +114,9 @@ end
 --- Returns a formatted string with icon for Lualine
 --- @param id number|nil
 function lualine_text(id)
-  local busy = is_terminal_busy()
+  -- local busy = is_terminal_busy()
   -- Icon:  (Terminal) | Status Icons:  (Watch/Waiting) vs  (Check/Idle)
-  if busy then
+  if false then
     return " Busy "
   else
     return " Idle "
@@ -127,7 +127,7 @@ end
 --- @param id number|nil
 function lualine_color(id)
   -- id = id or 1
-  local busy = is_terminal_busy()
+  local busy = false -- is_terminal_busy()
   if busy then
     return { fg = "#ff9e64", gui = "bold" } -- Orange for Busy
   else

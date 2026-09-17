@@ -55,6 +55,16 @@ return {
       "hrsh7th/cmp-cmdline",
     },
   },
+  {
+    "ThePrimeagen/refactoring.nvim",
+    dependencies = {
+        "nvim-lua/plenary.nvim",
+        "nvim-treesitter/nvim-treesitter",
+    },
+    config = function()
+        require('config.refactoring')
+    end,
+  },
 
   -- =======================================================================
   -- HELPER & UTILITIES
