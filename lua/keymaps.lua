@@ -59,12 +59,13 @@ keymap('n', ']g', ':Gitsigns next_hunk<CR>',
 )
 
 -- Diagnostic navigation
-keymap('n', '[e', vim.diagnostic.goto_prev,
-  { desc = "Jump to previous diagnostic" }
-)
-keymap('n', ']e', vim.diagnostic.goto_next,
-  { desc = "Jump to next diagnostic" }
-)
+keymap('n', '[e', function()
+  vim.diagnostic.jump({ count = -1, float = true })
+end, { desc = "Jump to previous diagnostic" })
+
+keymap('n', ']e', function()
+  vim.diagnostic.jump({ count = 1, float = true })
+end, { desc = "Jump to next diagnostic" })
 
 -- Toggle File Explorer (Nvim-Tree)
 keymap('n', '<leader>e', ':NvimTreeToggle<CR>',

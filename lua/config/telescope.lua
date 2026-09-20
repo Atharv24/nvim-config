@@ -18,6 +18,10 @@ telescope.setup({
     find_files = {
       find_command = { 'fd', '--type', 'f', '--hidden', '--exclude', '.git' },
     },
+    oldfiles = {
+      cwd = vim.fn.getcwd(),
+      only_cwd = true,
+    },
   },
   extensions = {
     -- Load the fzy extension for better sorting, if you installed it

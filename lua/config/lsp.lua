@@ -161,3 +161,28 @@ vim.lsp.config("gn", {
 
 vim.lsp.enable("gn")
 
+vim.lsp.config("lua", {
+  cmd = { 'lua-language-server.exe' },
+  filetypes = { 'lua' },
+  root_markers = { '.git' },
+  on_attach = on_attach,
+  capabilities = capabilities,
+  -- Add the settings block below:
+  settings = {
+    Lua = {
+      runtime = {
+        version = 'LuaJIT', -- Neovim runs on LuaJIT
+      },
+      diagnostics = {
+        globals = { 'vim' }, -- Stops the "undefined global 'vim'" error
+      },
+      workspace = {
+        -- This teaches the LSP all built-in Neovim commands, APIs, and options
+        library = vim.api.nvim_get_runtime_file("", true),
+        checkThirdParty = false, -- Disables annoying popups asking to configure your workspace
+      },
+    },
+  },
+})
+vim.lsp.enable("lua")
+
