@@ -101,14 +101,17 @@ local function toggle_terminal()
 end
 
 local function toggle_jetski()
-  if vim.fn.executable("jetski-cli") == 0 then
-    vim.notify("jetski-cli is not installed or not in PATH", vim.log.levels.WARN, { title = "Jetski" })
+  local cmd = vim.fn.executable("jetski-cli") == 1 and "jetski-cli"
+    or (vim.fn.executable("agy") == 1 and "agy" or nil)
+
+  if not cmd then
+    vim.notify("jetski-cli and agy are not installed or not in PATH", vim.log.levels.WARN, { title = "Jetski/AGY" })
     return
   end
 
   if not jetski_term then
     jetski_term = Terminal:new({
-      cmd = "jetski-cli",
+      cmd = cmd,
       direction = "float",
       hidden = true,
       count = 9, -- Separate ID from default terminal 1
@@ -143,10 +146,14 @@ vim.keymap.set({ 'n', 't' }, '<C-t>', toggle_terminal, {
 vim.keymap.set({ 'n', 't' }, '<C-y>', toggle_jetski, {
   noremap = true,
   silent = true,
-  desc = 'Toggle Jetski terminal',
+  desc = 'Toggle Jetski/AGY terminal',
 })
 
 -- User command :Jetski
 vim.api.nvim_create_user_command('Jetski', toggle_jetski, {
   desc = 'Toggle Jetski terminal',
+})
+
+vim.api.nvim_create_user_command('Agy', toggle_jetski, {
+  desc = 'Toggle AGY terminal',
 })
